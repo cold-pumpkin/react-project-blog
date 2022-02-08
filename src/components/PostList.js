@@ -9,14 +9,18 @@ class PostList extends Component {
     this.props.fetchPosts();
   }
 
-  render() {
+  render() {  // mapStateToProps 이후 
     return (
       <div>PostList!</div>
     );
   }
 }
 
+const mapStateToProps = (state) => {
+  return { posts: state.posts };  // reducers - combineReducers()에서 지정한 key로 state에서 꺼내오기
+}
+
 export default connect(
-  null,           // 현재 Redux store에서 관리할 state 가 없는 상태
-  { fetchPosts }  // Action Creators (key-value 같은 경우 생략 가능 : ES6)
+  mapStateToProps,
+  { fetchPosts }    // Action Creators (key-value 같은 경우 생략 가능 : ES6)
 )(PostList);
