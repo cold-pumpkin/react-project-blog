@@ -57,11 +57,22 @@ export const fetchPosts = () => {
 };
 */
 // Action creator ver. 3) 코드 개선
+// Action 1 : 블로그 포스트 정보 리스트 가져오기
 export const fetchPosts = () => async dispatch => {  
   const response = await jsonPlaceholder.get('/posts');
   
   dispatch({
     type: 'FETCH_POSTS',
-    payload: response
+    payload: response.data
   });
 };
+
+// Action 2 : id에 해당하는 유저 정보 가져오기
+export const fetchUser = (id) => async dispatch => {
+  const response = await jsonPlaceholder.get(`/users/${id}`);
+
+  dispatch({
+    type: 'FETCH_USER', 
+    payload: response.data
+  })
+}
