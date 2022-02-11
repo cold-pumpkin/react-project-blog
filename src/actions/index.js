@@ -1,4 +1,5 @@
 import jsonPlaceholder from '../apis/jsonPlaceholder';
+import _ from 'lodash';
 
 /* Action creator ver. 1) 비동기 함수 호출, object 리턴하는 경우 (Error)
 export const fetchPosts = async () => {
@@ -58,7 +59,7 @@ export const fetchPosts = () => {
 */
 // Action creator ver. 3) 코드 개선
 // Action 1 : 블로그 포스트 정보 리스트 가져오기
-export const fetchPosts = () => async dispatch => {  
+export const fetchPosts = () => async dispatch => {  // 한줄 return 생략
   const response = await jsonPlaceholder.get('/posts');
   
   dispatch({
@@ -68,6 +69,7 @@ export const fetchPosts = () => async dispatch => {
 };
 
 // Action 2 : id에 해당하는 유저 정보 가져오기
+/*
 export const fetchUser = (id) => async dispatch => {
   const response = await jsonPlaceholder.get(`/users/${id}`);
 
@@ -75,4 +77,19 @@ export const fetchUser = (id) => async dispatch => {
     type: 'FETCH_USER', 
     payload: response.data
   })
-}
+};
+*/
+
+/* Overfetching 해결하기 */
+
+// lodash 이용해 같은 id를 받은 함수라 반복해서 호출되지 않도록 memoization
+export const fetchUser = (id) => dispatch => _fetchUser(id, dispatch);
+
+const _fetchUser = _.memoize(async (id, dispatch) => {
+  const response = await jsonPlaceholder.get(`/users/${id}`);
+  
+  dispatch({
+    type: 'FETCH_USER', 
+    payload: response.data
+  });
+});
