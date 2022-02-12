@@ -59,7 +59,7 @@ export const fetchPosts = () => {
 */
 // Action creator ver. 3) 코드 개선
 // Action 1 : 블로그 포스트 정보 리스트 가져오기
-export const fetchPosts = () => async dispatch => {  // 한줄 return 생략
+export const fetchPosts = () => async dispatch => {  // function return 생략
   const response = await jsonPlaceholder.get('/posts');
   
   dispatch({
@@ -80,9 +80,11 @@ export const fetchUser = (id) => async dispatch => {
 };
 */
 
-/* Overfetching 해결하기 */
+/* Action 2 Overfetching 해결하기 */
+// 포스트 개수만큼 유저정보 API가 호출되는 비효율 해결하기
 
-// lodash 이용해 같은 id를 받은 함수라 반복해서 호출되지 않도록 memoization
+// 1) lodash 이용해 같은 id를 받은 함수가 반복해서 호출되지 않도록 memoization
+/*
 export const fetchUser = (id) => dispatch => _fetchUser(id, dispatch);
 
 const _fetchUser = _.memoize(async (id, dispatch) => {
@@ -93,3 +95,29 @@ const _fetchUser = _.memoize(async (id, dispatch) => {
     payload: response.data
   });
 });
+*/
+
+// 2) 포스트 목록을 받아온 후 userId를 중복없이 추출, 각 userId에 대해 유저 정보 호출
+export const fetchPostsAndUsers = () => async (dispatch, getState) => {   // getState : redux store의 데이터 접근
+  // function을 dispatch 하면 Redux thunk가 호출해줌
+  await dispatch(fetchPosts());   // fetchPosts() 수행 완료 후 아래 코드 실행
+  /*
+  const userIds = _.uniq(_.map(getState().posts, 'userId'));    // userId 들을 중복없이 추출
+  userIds.forEach(id => dispatch(fetchUser(id)));   // 유니크한 userId에 대해서만 API 호출
+  */
+  _.chain(getState().posts)
+    .map('userId')
+    .uniq()
+    .forEach(id => dispatch(fetchUser(id)))
+    .value();  // value() : 실행시키기
+}
+
+export const fetchUser = (id) => async dispatch => {
+  const response = await jsonPlaceholder.get(`/users/${id}`);
+
+  dispatch({
+    type: 'FETCH_USER', 
+    payload: response.data
+  });
+
+};

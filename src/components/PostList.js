@@ -1,13 +1,14 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
-import { fetchPosts } from '../actions';
+import { fetchPostsAndUsers } from '../actions';
 import UserHeader from './UserHeader';
 
 class PostList extends Component {
 
   // 렌더링 후 Post 데이터 fetch 하는 Action Creator 호출
   componentDidMount() {
-    this.props.fetchPosts();
+    //this.props.fetchPosts();
+    this.props.fetchPostsAndUsers();
   }
 
   renderList() {
@@ -40,5 +41,5 @@ const mapStateToProps = (state) => {
 
 export default connect(
   mapStateToProps,
-  { fetchPosts }    // Action Creators (key-value 같은 경우 생략 가능 : ES6)
+  { fetchPostsAndUsers }    // Action Creators (key-value 같은 경우 생략 가능 : ES6)
 )(PostList);

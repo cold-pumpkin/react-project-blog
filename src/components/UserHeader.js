@@ -1,12 +1,11 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
-import { fetchUser } from '../actions';
 
 class UserHeader extends Component {
-  componentDidMount() {
-    // 컴포넌트 마운트 후 prop로 넘어온 userId로 fetchUser 액션 호출 
-    this.props.fetchUser(this.props.userId);
-  }
+  // componentDidMount() {
+  //   // 컴포넌트 마운트 후 prop로 넘어온 userId로 fetchUser 액션 호출 
+  //   this.props.fetchUser(this.props.userId);  
+  // } // fetchPostsAndUsers()로 변경 후 불필요
 
   render() {
     //const user = this.props.users.find(user => user.id === this.props.userId);  -> mapStateToProps에서 수행
@@ -24,4 +23,4 @@ const mapStateToProps = (state, ownProps) => {  // ownProps는 PostList에서 Us
   return { user : state.users.find(user => user.id === ownProps.userId) };
 }
 
-export default connect(mapStateToProps, { fetchUser })(UserHeader);
+export default connect(mapStateToProps)(UserHeader);
